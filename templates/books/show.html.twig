@@ -31,7 +31,7 @@
             </div>
         </div>
 
-{#        {% if app.user and movie.userId == app.user.id %}#}
+        {% if app.user and 'ROLE_ADMIN' in app.user.roles  %}
         <div class="max-w-md mx-auto mt-20 flex justify-center">
             <a
                     href="/books/edit/{{ book.id }}"
@@ -45,6 +45,6 @@
                 Delete Book
             </a>
         </div>
-{#        {% endif %}#}
+        {% endif %}
     </div>
 {% endblock %}

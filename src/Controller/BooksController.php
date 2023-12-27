@@ -55,8 +55,10 @@ class BooksController extends AbstractController
     {
 //        $this->checkLoggedInUser($id);
         $book = $this->bookRepository->find($id);
-        $this->em->remove($book);
-        $this->em->flush();
+        if($book){
+            $this->em->remove($book);
+            $this->em->flush();
+        }
 
         return $this->redirectToRoute('books');
     }
@@ -121,11 +123,7 @@ class BooksController extends AbstractController
             'book' => $book
         ]);
     }
-//    private function checkLoggedInUser($movieId) {
-//        if($this->getUser() == null || $this->getUser()->getId() !== $movieId) {
-//            return $this->redirectToRoute('movies');
-//        }
-//    }
+
     /**
      * Gets data from form and adds it in a specified parameters of book
      * @param $form - Form from where it takes data
