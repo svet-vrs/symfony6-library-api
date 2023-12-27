@@ -25,7 +25,16 @@ class BooksController extends AbstractController
     }
 
     /**
-     * Main route, shows all books
+     * Redirects the roure to main page
+     */
+    #[Route('/', name: 'index')]
+    public function start(): Response
+    {
+        return $this->redirectToRoute('books');
+    }
+
+    /**
+     * Shows main page with all books
      */
     #[Route('/books', name: 'books')]
     public function index(): Response
