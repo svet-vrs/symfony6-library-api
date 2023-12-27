@@ -1,0 +1,20 @@
+{% extends "./base.html.twig" %}
+
+{% block body %}
+    <div class="w-4/5 m-auto pt-40">
+        <h1 class="text-6xl text-center pb-12">
+            Add new Book
+        </h1>
+
+        {{ form_start(form) }}
+
+        {{ form_widget(form) }}
+        <button
+                type="submit"
+                class="uppercase bg-blue-500 text-gray-100 text-0.5xl font-extrabold py-4 px-8 mt-5 rounded-3xl">
+            Post new book
+        </button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

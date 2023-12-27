@@ -1,0 +1,65 @@
+{% extends "./base.html.twig" %}
+
+{% block body %}
+    <div class="">
+{#        <h1 class="pt-20 sm:text-5xl md:text-7xl text-4xl font-bold text-center">#}
+{#            {{ book.title }}#}
+{#        </h1>#}
+
+{#        <p class="text-xl py-6">#}
+{#           Genres:#}
+{#            {% for genre in book.genres %}#}
+{#                {{ genre.title }};#}
+{#            {% endfor %}#}
+{#        </p>#}
+{#        <p class="text-xl py-6">#}
+{#            Authors:#}
+{#            {% for author in book.authors %}#}
+{#                {{ author.name }};#}
+{#            {% endfor %}#}
+{#        </p>#}
+
+        <div class="max-w-md mx-auto bg-white p-8 rounded shadow-md mt-40" >
+            <h1 class="text-2xl font-bold mb-4">{{ book.title }}</h1>
+
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-2">Title:</h2>
+                <p class="text-gray-800">{{ book.title }}</p>
+            </div>
+
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-2">Genres:</h2>
+                <ul class="list-disc list-inside">
+                    {% for genre in book.genres %}
+                        <li class="text-gray-800">{{ genre.title }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-semibold mb-2">Authors:</h2>
+                <ul class="list-disc list-inside">
+                    {% for author in book.authors %}
+                        <li class="text-gray-800">{{ author.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+{#        {% if app.user and movie.userId == app.user.id %}#}
+        <div class="max-w-md mx-auto mt-20">
+            <a
+                    href="/books/edit/{{ book.id }}"
+                    class="bg-green-500 font-bold py-2 px-4 rounded transition-all hover:bg-green-300">
+                Edit Book
+            </a>
+
+            <a
+                    href="/books/delete/{{ book.id }}"
+                    class="bg-red-500 font-bold py-2 px-4 ml-6  rounded transition-all hover:bg-red-300">
+                Delete Book
+            </a>
+        </div>
+{#        {% endif %}#}
+    </div>
+{% endblock %}

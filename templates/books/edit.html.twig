@@ -1,0 +1,47 @@
+{% extends "./base.html.twig" %}
+
+{% block body %}
+
+    <div class="w-4/5 m-auto pt-40" >
+        <h1 class="text-3xl text-center pb-12">
+            Edit Book
+        </h1>
+
+        <div class="max-w-md mx-auto bg-white p-8 rounded shadow-md" >
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-2">Title:</h2>
+                <p class="text-gray-800">{{ book.title }}</p>
+            </div>
+
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-2">Genres:</h2>
+                <ul class="list-disc list-inside">
+                    {% for genre in book.genres %}
+                        <li class="text-gray-800">{{ genre.title }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-semibold mb-2">Authors:</h2>
+                <ul class="list-disc list-inside">
+                    {% for author in book.authors %}
+                        <li class="text-gray-800">{{ author.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {{ form_start(form) }}
+
+        {{ form_widget(form) }}
+
+        <button
+                type="submit"
+                class="uppercase bg-blue-500 text-gray-100 text-0.5xl font-extrabold py-4 px-8 mt-5 rounded-3xl">
+            Submit Changes
+        </button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
