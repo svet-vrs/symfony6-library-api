@@ -47,7 +47,7 @@ class ChangeUserRoleCommand extends Command
             return Command::FAILURE;
         }
 
-        $availableRoles = ['ROLE_USER', 'ROLE_ADMIN']; // Замените на ваши роли
+        $availableRoles = ['ROLE_CLIENT', 'ROLE_ADMIN']; // Замените на ваши роли
         $question = new ChoiceQuestion(
             'Select a new role:',
             $availableRoles

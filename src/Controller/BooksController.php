@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BooksController extends AbstractController
@@ -55,7 +56,7 @@ class BooksController extends AbstractController
     {
 //        $this->checkLoggedInUser($id);
         $book = $this->bookRepository->find($id);
-        if($book){
+        if ($book) {
             $this->em->remove($book);
             $this->em->flush();
         }
@@ -110,6 +111,46 @@ class BooksController extends AbstractController
         ]);
     }
 
+    #[Route('/books/export', name: 'export_books', methods: ['GET'])]
+    public function exportBooks()
+    {
+        $books = $this->bookRepository->findAll();
+
+        $response = new StreamedResponse(function () use ($books) {
+            $handle = fopen('php://output', 'w+');
+
+            // Устанавливаем заголовки CSV файла
+            fputcsv($handle, ['Title','Genres','Authors']);
+
+            // Записываем данные из базы данных в CSV
+            foreach ($books as $book) {
+                $genres = $book->getGenres();
+                $genres_data = [];
+                foreach ($genres as $genre){
+                    array_push($genres_data,$genre->getTitle());
+                }
+                $authors = $book->getAuthors();
+                $authors_data = [];
+                foreach ($authors as $author){
+                    array_push($authors_data,$author->getName());
+                }
+                fputcsv($handle, [
+                    $book->getTitle(),
+                    implode(',', $genres_data),
+                    implode(',', $authors_data),
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        // Устанавливаем заголовки ответа для скачивания файла
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="books.csv"');
+
+        return $response;
+    }
+
     /**
      * Shows data about book by specified id
      * @param $id - Book's id
@@ -123,6 +164,8 @@ class BooksController extends AbstractController
             'book' => $book
         ]);
     }
+
+
 
     /**
      * Gets data from form and adds it in a specified parameters of book
