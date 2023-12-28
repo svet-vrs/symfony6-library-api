@@ -1,0 +1,67 @@
+@startuml
+
+entity "author" {
+  + id INT
+  + name VARCHAR(255)
+  --
+  PK id
+}
+
+entity "book" {
+  + id INT
+  + title VARCHAR(255)
+  --
+  PK id
+}
+
+entity "genre" {
+  + id INT
+  + title VARCHAR(255)
+  --
+  PK id
+}
+
+entity "user" {
+  + id INT
+  + email VARCHAR(180)
+  + roles JSON
+  + password VARCHAR(255)
+  --
+  PK id
+}
+
+entity "book_genre" {
+  + book_id INT
+  + genre_id INT
+  --
+  PK (book_id, genre_id)
+  FK book_id references book(id)
+  FK genre_id references genre(id)
+}
+
+entity "book_author" {
+  + book_id INT
+  + author_id INT
+  --
+  PK (book_id, author_id)
+  FK book_id references book(id)
+  FK author_id references author(id)
+}
+
+entity "user_book" {
+  + user_id INT
+  + book_id INT
+  --
+  PK (user_id, book_id)
+  FK user_id references user(id)
+  FK book_id references book(id)
+}
+
+book ||--o{ book_genre
+book ||--o{ book_author
+book ||--o{ user_book
+genre ||--o{ book_genre
+user ||--o{ user_book
+author ||--o{ book_author
+
+@enduml

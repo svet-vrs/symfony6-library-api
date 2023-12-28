@@ -1,0 +1,30 @@
+@startuml
+
+class Author {
+    id: INT
+    name: VARCHAR(255)
+}
+
+class Book {
+    id: INT
+    title: VARCHAR(255)
+}
+
+class Genre {
+    id: INT
+    title: VARCHAR(255)
+}
+
+class User {
+    id: INT
+    email: VARCHAR(180)
+    roles: JSON
+    password: VARCHAR(255)
+}
+
+Author "N" -- "N" Book : has
+Book "N" -- "N" Genre : belongs to
+Book "N" -- "N" Author : written by
+User "N" -- "N" Book : favorites
+
+@enduml

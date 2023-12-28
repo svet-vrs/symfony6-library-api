@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20231226230428 extends AbstractMigration
+final class Version20231228163723 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -23,6 +23,7 @@ final class Version20231226230428 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE author_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE book_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE genre_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE author (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE book (id INT NOT NULL, title VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE book_genre (book_id INT NOT NULL, genre_id INT NOT NULL, PRIMARY KEY(book_id, genre_id))');
@@ -32,10 +33,17 @@ final class Version20231226230428 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_9478D34516A2B381 ON book_author (book_id)');
         $this->addSql('CREATE INDEX IDX_9478D345F675F31B ON book_author (author_id)');
         $this->addSql('CREATE TABLE genre (id INT NOT NULL, title VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "user" (id INT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
+        $this->addSql('CREATE TABLE user_book (user_id INT NOT NULL, book_id INT NOT NULL, PRIMARY KEY(user_id, book_id))');
+        $this->addSql('CREATE INDEX IDX_B164EFF8A76ED395 ON user_book (user_id)');
+        $this->addSql('CREATE INDEX IDX_B164EFF816A2B381 ON user_book (book_id)');
         $this->addSql('ALTER TABLE book_genre ADD CONSTRAINT FK_8D92268116A2B381 FOREIGN KEY (book_id) REFERENCES book (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE book_genre ADD CONSTRAINT FK_8D9226814296D31F FOREIGN KEY (genre_id) REFERENCES genre (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE book_author ADD CONSTRAINT FK_9478D34516A2B381 FOREIGN KEY (book_id) REFERENCES book (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE book_author ADD CONSTRAINT FK_9478D345F675F31B FOREIGN KEY (author_id) REFERENCES author (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_book ADD CONSTRAINT FK_B164EFF8A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_book ADD CONSTRAINT FK_B164EFF816A2B381 FOREIGN KEY (book_id) REFERENCES book (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     public function down(Schema $schema): void
@@ -45,14 +53,19 @@ final class Version20231226230428 extends AbstractMigration
         $this->addSql('DROP SEQUENCE author_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE book_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE genre_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
         $this->addSql('ALTER TABLE book_genre DROP CONSTRAINT FK_8D92268116A2B381');
         $this->addSql('ALTER TABLE book_genre DROP CONSTRAINT FK_8D9226814296D31F');
         $this->addSql('ALTER TABLE book_author DROP CONSTRAINT FK_9478D34516A2B381');
         $this->addSql('ALTER TABLE book_author DROP CONSTRAINT FK_9478D345F675F31B');
+        $this->addSql('ALTER TABLE user_book DROP CONSTRAINT FK_B164EFF8A76ED395');
+        $this->addSql('ALTER TABLE user_book DROP CONSTRAINT FK_B164EFF816A2B381');
         $this->addSql('DROP TABLE author');
         $this->addSql('DROP TABLE book');
         $this->addSql('DROP TABLE book_genre');
         $this->addSql('DROP TABLE book_author');
         $this->addSql('DROP TABLE genre');
+        $this->addSql('DROP TABLE "user"');
+        $this->addSql('DROP TABLE user_book');
     }
 }
