@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Library Api{% endblock %}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
 </head>
@@ -64,7 +65,7 @@
                                 class="inline-block text-gray-300 no-underline hover:text-gray-200 hover:text-underline py-2 px-4"
                                 href="/books"
                                 @click="isOpen = false">
-                            Home
+                            Books
                         </a>
                     </li>
                     {% if app.user %}
@@ -80,7 +81,7 @@
                     <li class="mr-3">
                         <a
                                 class="inline-block text-gray-300 no-underline hover:text-gray-200 hover:text-underline py-2 px-4"
-                                href="/{{app.user ? 'logout' : 'login'}}"
+                                href="/{{ app.user ? 'logout' : 'login' }}"
                                 @click="isOpen = false">
                             {{ app.user ? 'Logout' : 'Login' }}
                         </a>
@@ -99,6 +100,39 @@
             </div>
         </nav>
     </header>
+{% endblock %}
+{% block alert %}
+    {% for label, messages in app.flashes() %}
+        {% for message in messages %}
+            <div class="
+            p-4 mb-4 mt-20
+            rounded-lg shadow-md
+            {% if label == 'success' %}
+                bg-green-100 text-green-900
+            {% elseif label == 'error' %}
+                bg-red-100 text-red-900
+            {% elseif label == 'warning' %}
+                bg-yellow-100 text-yellow-900
+            {% elseif label == 'info' %}
+                bg-blue-100 text-blue-900
+            {% endif %}
+        ">
+                {{ message|raw }}
+                <button
+                        class="float-right text-sm text-gray-600 focus:outline-none"
+                        onclick="this.parentElement.style.display='none';"
+                >
+                    &#x2716;
+                </button>
+            </div>
+            <script>
+                // Add a script for each flash message to hide it after 5 seconds
+                setTimeout(function() {
+                    document.querySelector('.flash-message-{{ loop.index }}').style.display = 'none';
+                }, 5000);
+            </script>
+        {% endfor %}
+    {% endfor %}
 {% endblock %}
 
 {% block body %}{% endblock %}

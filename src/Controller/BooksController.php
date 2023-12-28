@@ -61,7 +61,7 @@ class BooksController extends AbstractController
             $this->em->remove($book);
             $this->em->flush();
         }
-
+        $this->addFlash('success', 'You have successfully deleted the book!');
         return $this->redirectToRoute('books');
     }
 
@@ -80,7 +80,7 @@ class BooksController extends AbstractController
             $this->getFormData($form, $book);
             return $this->redirectToRoute('books');
         }
-
+        $this->addFlash('success', 'You have successfully created the book!');
         return $this->render('books/create.html.twig', [
             'form' => $form->createView()
         ]);
@@ -105,7 +105,7 @@ class BooksController extends AbstractController
             $this->getFormData($form, $book);
             return $this->redirectToRoute('show_book', ['id' => $id]);
         }
-
+        $this->addFlash('success', 'You have successfully edited the book!');
         return $this->render('books/edit.html.twig', [
             'book' => $book,
             'form' => $form->createView()
@@ -192,14 +192,20 @@ class BooksController extends AbstractController
     #[Route('/favorites/{user_id}/add/{book_id}', name: 'add_favorites')]
     public function addFavorites($user_id, $book_id): Response
     {
-        $user = $this->em->getRepository(User::class)->find($user_id);
-        $book = $this->bookRepository->find($book_id);
+        if ($this->getUser() != null && $this->getUser()->getId() == $user_id) {
+            $user = $this->em->getRepository(User::class)->find($user_id);
+            $book = $this->bookRepository->find($book_id);
 
-        $user->addFavorite($book);
-        $this->em->persist($user);
-        $this->em->flush();
+            $user->addFavorite($book);
+            $this->em->persist($user);
+            $this->em->flush();
+            $this->addFlash('success', 'You have successfully added the '.$book->getTitle().' to your favorites!');
+        }
+        else{
+            $this->addFlash('warning', 'You have access only to your favorites!');
+        }
 
-        return $this->redirectToRoute('favorites', ['id' => $user_id]);
+        return $this->redirectToRoute('favorites', ['id' => $this->getUser()->getId()]);
     }
 
     /**
@@ -210,14 +216,19 @@ class BooksController extends AbstractController
     #[Route('/favorites/{user_id}/delete/{book_id}', name: 'delete_favorites')]
     public function deleteFavorites($user_id, $book_id): Response
     {
-        $user = $this->em->getRepository(User::class)->find($user_id);
-        $book = $this->bookRepository->find($book_id);
+        if ($this->getUser() != null && $this->getUser()->getId() == $user_id) {
+            $user = $this->em->getRepository(User::class)->find($user_id);
+            $book = $this->bookRepository->find($book_id);
 
-        $user->removeFavorite($book);
-        $this->em->persist($user);
-        $this->em->flush();
-
-        return $this->redirectToRoute('favorites', ['id' => $user_id]);
+            $user->removeFavorite($book);
+            $this->em->persist($user);
+            $this->em->flush();
+            $this->addFlash('success', 'You have successfully deleted the '.$book->getTitle().' from your favorites!');
+        }
+        else{
+            $this->addFlash('warning', 'You have access only to your favorites!');
+        }
+        return $this->redirectToRoute('favorites', ['id' => $this->getUser()->getId()]);
     }
 
 
