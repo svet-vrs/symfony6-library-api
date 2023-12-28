@@ -77,10 +77,11 @@ class BooksController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getFormData($form, $book);
+            $this->saveFormData($form, $book);
+            $this->addFlash('success', 'You have successfully created the book!');
             return $this->redirectToRoute('books');
         }
-        $this->addFlash('success', 'You have successfully created the book!');
+
         return $this->render('books/create.html.twig', [
             'form' => $form->createView()
         ]);
@@ -102,10 +103,11 @@ class BooksController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $book->removeAllGenres();
             $book->removeAllAuthors();
-            $this->getFormData($form, $book);
+            $this->saveFormData($form, $book);
+            $this->addFlash('success', 'You have successfully edited the book!');
             return $this->redirectToRoute('show_book', ['id' => $id]);
         }
-        $this->addFlash('success', 'You have successfully edited the book!');
+
         return $this->render('books/edit.html.twig', [
             'book' => $book,
             'form' => $form->createView()
@@ -123,10 +125,9 @@ class BooksController extends AbstractController
         $response = new StreamedResponse(function () use ($books) {
             $handle = fopen('php://output', 'w+');
 
-            // Устанавливаем заголовки CSV файла
+
             fputcsv($handle, ['Title', 'Genres', 'Authors']);
 
-            // Записываем данные из базы данных в CSV
             foreach ($books as $book) {
                 $genres = $book->getGenres();
                 $genres_data = [];
@@ -148,7 +149,6 @@ class BooksController extends AbstractController
             fclose($handle);
         });
 
-        // Устанавливаем заголовки ответа для скачивания файла
         $response->headers->set('Content-Type', 'text/csv');
         $response->headers->set('Content-Disposition', 'attachment; filename="books.csv"');
 
@@ -237,7 +237,7 @@ class BooksController extends AbstractController
      * @param $form - Form from where it takes data
      * @param $book - Book object to be created/changed
      */
-    private function getFormData($form, $book): void
+    private function saveFormData($form, $book): void
     {
         $book->setTitle($form->get('title')->getData());
 
