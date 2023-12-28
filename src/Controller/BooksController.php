@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Entity\User;
 use App\Entity\Genre;
 use App\Entity\Author;
 use App\Form\BookFormType;
@@ -111,6 +112,9 @@ class BooksController extends AbstractController
         ]);
     }
 
+    /**
+     * Creates csv file and returns it
+     */
     #[Route('/books/export', name: 'export_books', methods: ['GET'])]
     public function exportBooks()
     {
@@ -120,19 +124,19 @@ class BooksController extends AbstractController
             $handle = fopen('php://output', 'w+');
 
             // Устанавливаем заголовки CSV файла
-            fputcsv($handle, ['Title','Genres','Authors']);
+            fputcsv($handle, ['Title', 'Genres', 'Authors']);
 
             // Записываем данные из базы данных в CSV
             foreach ($books as $book) {
                 $genres = $book->getGenres();
                 $genres_data = [];
-                foreach ($genres as $genre){
-                    array_push($genres_data,$genre->getTitle());
+                foreach ($genres as $genre) {
+                    array_push($genres_data, $genre->getTitle());
                 }
                 $authors = $book->getAuthors();
                 $authors_data = [];
-                foreach ($authors as $author){
-                    array_push($authors_data,$author->getName());
+                foreach ($authors as $author) {
+                    array_push($authors_data, $author->getName());
                 }
                 fputcsv($handle, [
                     $book->getTitle(),
@@ -165,6 +169,56 @@ class BooksController extends AbstractController
         ]);
     }
 
+    /**
+     * Shows data about list of favorite books of user with specified id
+     * @param $id - User's id
+     */
+    #[Route('/favorites/{id}', name: 'favorites', methods: ['GET'])]
+    public function showFavorites($id): Response
+    {
+        $genre = $this->em->getRepository(User::class)->find($id);
+        $books = $genre->getFavorites();
+
+        return $this->render('books/favorites.html.twig', [
+            'books' => $books
+        ]);
+    }
+
+    /**
+     * Adds the book with specified id to list of favorites of user with specified id
+     * @param $user_id - User's id
+     * @param $book_id - Book's id
+     */
+    #[Route('/favorites/{user_id}/add/{book_id}', name: 'add_favorites')]
+    public function addFavorites($user_id, $book_id): Response
+    {
+        $user = $this->em->getRepository(User::class)->find($user_id);
+        $book = $this->bookRepository->find($book_id);
+
+        $user->addFavorite($book);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $this->redirectToRoute('favorites', ['id' => $user_id]);
+    }
+
+    /**
+     * Deletes the book with specified id from the list of favorites of user with specified id
+     * @param $user_id - User's id
+     * @param $book_id - Book's id
+     */
+    #[Route('/favorites/{user_id}/delete/{book_id}', name: 'delete_favorites')]
+    public function deleteFavorites($user_id, $book_id): Response
+    {
+        $user = $this->em->getRepository(User::class)->find($user_id);
+        $book = $this->bookRepository->find($book_id);
+
+        $user->removeFavorite($book);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $this->redirectToRoute('favorites', ['id' => $user_id]);
+    }
 
 
     /**

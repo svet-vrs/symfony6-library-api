@@ -1,0 +1,27 @@
+{% extends "./base.html.twig" %}
+
+{% block body %}
+    <div class="w-4/5 m-auto text-center">
+        <div class="py-12 border-b border-gray-200">
+            <h1 class="text-6xl pt-12 pb-8">
+                Books in favorites ({{ books|length }})
+            </h1>
+        </div>
+    </div>
+
+    <div class="md:grid lg:grid-cols-3 gap-20 w-4/5 mx-auto py-15 ">
+        <!-- Review Item -->
+        {% for book in books %}
+            <div class="text-center pt-8 pb-4">
+
+                <h2 class="text-gray-700 font-bold text-3xl py-2 mb-10">
+                    {{ book.title }}
+                </h2>
+
+                <a href="/books/{{ book.id }}" class="uppercase border border-gray-500 text-gray-600 text-lg py-4 px-12 rounded transition transition-all hover:bg-gray-800 hover:text-white">
+                    View more
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

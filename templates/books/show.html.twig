@@ -31,8 +31,9 @@
             </div>
         </div>
 
-        {% if app.user and 'ROLE_ADMIN' in app.user.roles  %}
+
         <div class="max-w-md mx-auto mt-20 flex justify-center">
+            {% if app.user and 'ROLE_ADMIN' in app.user.roles  %}
             <a
                     href="/books/edit/{{ book.id }}"
                     class="bg-green-500 font-bold py-2 px-4 rounded transition-all hover:bg-green-300">
@@ -44,7 +45,22 @@
                     class="bg-red-500 font-bold py-2 px-4 ml-6  rounded transition-all hover:bg-red-300">
                 Delete Book
             </a>
+            {% endif %}
+            {% if app.user and book not in app.user.favorites %}
+                <a
+                        href="/favorites/{{ app.user.id }}/add/{{ book.id }}"
+                        class="bg-yellow-500 font-bold py-2 px-4 ml-6  rounded transition-all hover:bg-red-300">
+                    Add to favorites
+                </a>
+            {% endif %}
+            {% if app.user and book in app.user.favorites %}
+                <a
+                        href="/favorites/{{ app.user.id }}/delete/{{ book.id }}"
+                        class="bg-red-500 font-bold py-2 px-4 ml-6  rounded transition-all hover:bg-red-300">
+                    Delete from favorites
+                </a>
+            {% endif %}
         </div>
-        {% endif %}
+
     </div>
 {% endblock %}

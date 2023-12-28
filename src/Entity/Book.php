@@ -24,10 +24,14 @@ class Book
     #[ORM\ManyToMany(targetEntity: Author::class, inversedBy: 'books')]
     private Collection $authors;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favorites')]
+    private Collection $favoriteBy;
+
     public function __construct()
     {
         $this->genres = new ArrayCollection();
         $this->authors = new ArrayCollection();
+        $this->favoriteBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -105,6 +109,33 @@ class Book
     public function removeAllAuthors(): static
     {
         $this->authors = new ArrayCollection();
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getFavoriteBy(): Collection
+    {
+        return $this->favoriteBy;
+    }
+
+    public function addFavoriteBy(User $favoriteBy): static
+    {
+        if (!$this->favoriteBy->contains($favoriteBy)) {
+            $this->favoriteBy->add($favoriteBy);
+            $favoriteBy->addFavorite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteBy(User $favoriteBy): static
+    {
+        if ($this->favoriteBy->removeElement($favoriteBy)) {
+            $favoriteBy->removeFavorite($this);
+        }
 
         return $this;
     }
